@@ -94,6 +94,46 @@ public class Model extends Observable {
         setChanged();
     }
 
+    private int nextRowPos(Board b, int col, int row, boolean[][] hasmerge, int[] score) {
+        int size = b.size();
+        int value = b.tile(col,row).value();
+        int next = row;
+        for(int i=size-1; i>row; i--) {
+            if(b.tile(col,i)==null) {
+                next = i;
+                break;
+            } else if (b.tile(col,i).value()==value && !hasmerge[col][i]) {
+                next = i;
+                score[0]=score[0] +value*2;
+                hasmerge[col][i] = true;
+                break;
+            }
+        }
+        return next;
+    }
+
+    private boolean upmove(Board b, int[] score){
+        int size=board.size();
+        boolean changed=false;
+        boolean[][] hasmerge = new boolean[size][size];
+
+        for(int j=0;j<size;j++) {
+            for(int i=size-1;i>=0;i--) {
+                Tile tile = b.tile(j,i);
+                if(tile==null) {
+                    continue;
+                }
+                int next = nextRowPos(b,j,i,hasmerge, score);
+                if(next!=i) {
+                    board.move(j,next,tile);
+                    changed=true;
+                }
+            }
+        }
+        return changed;
+    }
+
+
     /** Tilt the board toward SIDE. Return true iff this changes the board.
      *
      * 1. If two Tile objects are adjacent in the direction of motion and have
@@ -113,11 +153,17 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);
+        int[] tmp_score = new int[1];
+
+        changed=upmove(board, tmp_score);
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
+        score = tmp_score[0]+score;
         return changed;
     }
 

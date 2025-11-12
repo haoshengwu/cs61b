@@ -98,22 +98,32 @@ public class Model extends Observable {
         int size = b.size();
         int value = b.tile(col,row).value();
         int next = row;
-        for(int i=size-1; i>row; i--) {
-            if(b.tile(col,i)==null) {
-                next = i;
-                break;
-            } else if (b.tile(col,i).value()==value && !hasmerge[col][i]) {
-                next = i;
+        int k = row+1;
+        int last_empty = row;
+        while (k<size && b.tile(col,k)==null) {
+            last_empty=k;
+            k++;
+        }
+        if(last_empty==size-1) {
+            next=last_empty;
+            return next;
+        }
+        else{
+            if(b.tile(col,last_empty+1).value()==value && !hasmerge[col][last_empty+1]){
+                next = last_empty+1;
                 score[0]=score[0] +value*2;
-                hasmerge[col][i] = true;
-                break;
+                hasmerge[col][last_empty+1] = true;
+            }
+            else {
+                next = last_empty;
             }
         }
+
         return next;
     }
 
     private boolean upmove(Board b, int[] score){
-        int size=board.size();
+        int size=b.size();
         boolean changed=false;
         boolean[][] hasmerge = new boolean[size][size];
 
@@ -125,7 +135,7 @@ public class Model extends Observable {
                 }
                 int next = nextRowPos(b,j,i,hasmerge, score);
                 if(next!=i) {
-                    board.move(j,next,tile);
+                    b.move(j,next,tile);
                     changed=true;
                 }
             }

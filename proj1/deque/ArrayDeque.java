@@ -55,28 +55,29 @@ public class ArrayDeque<Item> {
         size++;
     }
 
-    public void removeFirst() {
+    public Item removeFirst() {
         if(isEmpty()){
             System.out.println("The Array is empty");
-            return;
+            return null;
         }
         if((double) size/length<0.25 && length>=16){
             resize(Math.max(length / 4, 8));
         }
+
         nextFirst++;
         if(nextFirst>length-1){
             nextFirst=0;
         }
+        Item firstitem=items[nextFirst];
         size--;
-        if((double) size/length<0.25 && length>=16){
-            resize(Math.max(length / 4, 8));
-        }
+        return firstitem;
+
     }
 
-    public void removeLast(){
+    public Item removeLast(){
         if(isEmpty()){
             System.out.println("The Array is empty");
-            return;
+            return null;
         }
         if((double) size/length<0.25 && length>=16){
             resize(Math.max(length / 4, 8));
@@ -85,7 +86,9 @@ public class ArrayDeque<Item> {
         if(nextLast<0){
             nextLast=length-1;
         }
+        Item lastitem=items[nextLast];
         size--;
+        return lastitem;
     }
 
     public Item get(int index){

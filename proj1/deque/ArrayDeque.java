@@ -22,12 +22,14 @@ public class ArrayDeque<Item> {
     private void resize(int cap) {
         Item[] newItems = (Item []) new Object[cap];
 
-        for(int i=0;i<length-1;i++){
+        for(int i=0;i<=size-1;i++){
             newItems[i]=this.get(i);
         }
-        this.items=newItems;
+        this.length=cap;
         this.nextFirst=cap-1;
-        this.nextLast=length;
+        this.nextLast=size;
+        this.items=newItems;
+
     }
 
 
@@ -49,8 +51,8 @@ public class ArrayDeque<Item> {
         }
         items[nextLast]=item;
         nextLast++;
-        if(nextFirst>length-1){
-            nextFirst=0;
+        if(nextLast>length-1){
+            nextLast=0;
         }
         size++;
     }
@@ -60,8 +62,10 @@ public class ArrayDeque<Item> {
             System.out.println("The Array is empty");
             return null;
         }
-        if((double) size/length<0.25 && length>=16){
-            resize(Math.max(length / 4, 8));
+
+        if (size < 0.25 * length && length >= 16) {
+            int newLength = Math.max((int) Math.ceil(length * 0.25), 8);
+            resize(newLength);
         }
 
         nextFirst++;
@@ -70,7 +74,12 @@ public class ArrayDeque<Item> {
         }
         Item firstitem=items[nextFirst];
         size--;
+        items[nextFirst]=null;
+
+
         return firstitem;
+
+
 
     }
 
@@ -79,26 +88,33 @@ public class ArrayDeque<Item> {
             System.out.println("The Array is empty");
             return null;
         }
-        if((double) size/length<0.25 && length>=16){
-            resize(Math.max(length / 4, 8));
+
+        if (size < 0.25 * length && length >= 16) {
+            int newLength = Math.max((int) Math.ceil(length * 0.25), 8);
+            resize(newLength);
         }
+
         nextLast--;
         if(nextLast<0){
             nextLast=length-1;
         }
         Item lastitem=items[nextLast];
+        items[nextLast]=null;
         size--;
+
+
+
         return lastitem;
     }
 
     public Item get(int index){
-        if(index < this.size-1){
+        if(index > size-1){
             return null;
         }
         int tmp;
         tmp=nextFirst+1+index;
         if(tmp>length-1){
-            tmp=tmp-(length-1);
+            tmp=tmp-length;
         }
         return items[tmp];
     }
@@ -106,7 +122,6 @@ public class ArrayDeque<Item> {
     public int size(){
         return size;
     }
-
 
     public void printDeque(){
         for(int i=0;i<size;i++){
@@ -117,7 +132,12 @@ public class ArrayDeque<Item> {
     }
 
 
-    public void main(){
+    public static void main(String[] args){
+        ArrayDeque<Integer> array=new ArrayDeque<>();
+        for(int i=0;i<32;i++){
+            array.addLast(i);
+        }
+
 
     }
 

@@ -96,7 +96,7 @@ public class ArrayDeque<Item> {
             return null;
         }
         int tmp;
-        tmp=nextFirst-1+index;
+        tmp=nextFirst+1+index;
         if(tmp>length-1){
             tmp=tmp-(length-1);
         }
@@ -117,7 +117,9 @@ public class ArrayDeque<Item> {
     }
 
 
+    public void main(){
 
+    }
 
 
 

@@ -3,7 +3,7 @@ package deque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkedListDeque<Item> {
+public class LinkedListDeque<Item> implements  Deque<Item> {
     private static final Logger log = LoggerFactory.getLogger(LinkedListDeque.class);
     private Node<Item> sentinel;
     private int size;
@@ -15,14 +15,17 @@ public class LinkedListDeque<Item> {
         size=0;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
+//    @Override
+//    public boolean isEmpty() {
+//        return size == 0;
+//    }
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public void addFirst(Item item) {
         Node<Item> tmp=sentinel.next;
         Node<Item> newnode=new Node<>(item, sentinel,tmp);
@@ -31,6 +34,7 @@ public class LinkedListDeque<Item> {
         size++;
     }
 
+    @Override
     public void addLast(Item item) {
         Node<Item> tmp=sentinel.prev;
         Node<Item> newnode=new Node<>(item, tmp, sentinel);
@@ -39,6 +43,7 @@ public class LinkedListDeque<Item> {
         size++;
     }
 
+    @Override
     public Item removeFirst() {
         if(this.isEmpty()){
             System.out.println("The deque is empty");
@@ -52,6 +57,7 @@ public class LinkedListDeque<Item> {
         return firstitem;
     }
 
+    @Override
     public Item removeLast() {
         if(this.isEmpty()){
             System.out.println("The deque is empty");
@@ -77,6 +83,7 @@ public class LinkedListDeque<Item> {
         }
     }
 
+    @Override
     public void printDeque(){
         Node<Item> tmp=sentinel.next;
         while(tmp!=sentinel){
@@ -86,6 +93,7 @@ public class LinkedListDeque<Item> {
         System.out.print("/n");
     }
 
+    @Override
     public Item get(int index){
         if(index < this.size-1){
             return null;

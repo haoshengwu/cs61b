@@ -1,6 +1,6 @@
 package deque;
 
-public class ArrayDeque<Item> {
+public class ArrayDeque<Item> implements Deque<Item> {
     private int size=0;
     private int length;
     private Item[] items;
@@ -14,10 +14,15 @@ public class ArrayDeque<Item> {
         nextLast=4;
         nextFirst=3;
     }
-
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
+
+//    @Override
+//    public int size(){
+//        return size;
+//    }
 
     private void resize(int cap) {
         Item[] newItems = (Item []) new Object[cap];
@@ -32,7 +37,7 @@ public class ArrayDeque<Item> {
 
     }
 
-
+    @Override
     public void addFirst(Item item) {
         if(size==length){
             resize(length*2);
@@ -45,6 +50,7 @@ public class ArrayDeque<Item> {
         size++;
     }
 
+    @Override
     public void addLast(Item item) {
         if(size==length){
             resize(length*2);
@@ -57,6 +63,7 @@ public class ArrayDeque<Item> {
         size++;
     }
 
+    @Override
     public Item removeFirst() {
         if(isEmpty()){
             System.out.println("The Array is empty");
@@ -83,6 +90,7 @@ public class ArrayDeque<Item> {
 
     }
 
+    @Override
     public Item removeLast(){
         if(isEmpty()){
             System.out.println("The Array is empty");
@@ -107,6 +115,7 @@ public class ArrayDeque<Item> {
         return lastitem;
     }
 
+    @Override
     public Item get(int index){
         if(index > size-1){
             return null;
@@ -119,10 +128,9 @@ public class ArrayDeque<Item> {
         return items[tmp];
     }
 
-    public int size(){
-        return size;
-    }
 
+
+    @Override
     public void printDeque(){
         for(int i=0;i<size;i++){
             System.out.print(get(i)+" ");
@@ -131,6 +139,8 @@ public class ArrayDeque<Item> {
 
     }
 
+
+    
 
     public static void main(String[] args){
         ArrayDeque<Integer> array=new ArrayDeque<>();

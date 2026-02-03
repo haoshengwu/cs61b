@@ -11,7 +11,7 @@ public class MaxArrayDeque<Item> extends ArrayDeque<Item> {
         comparator = c;
     }
 
-    public Item Max(){
+    public Item max(){
         if(isEmpty()){
             return null;
         } else {
@@ -25,7 +25,7 @@ public class MaxArrayDeque<Item> extends ArrayDeque<Item> {
         }
     }
 
-    public Item Max(Comparator<Item> c) {
+    public Item max(Comparator<Item> c) {
         if(isEmpty()){
             return null;
         } else  {

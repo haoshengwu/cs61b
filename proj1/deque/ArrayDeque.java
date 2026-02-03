@@ -111,7 +111,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         Item lastitem=items[nextLast];
         items[nextLast]=null;
         size--;
-        
+
         return lastitem;
     }
 
@@ -140,9 +140,9 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
 
-   public class ArraySetIterator implements Iterator<Item> {
+   public class ArrayDequeIterator implements Iterator<Item> {
         int wizpos;
-        public ArraySetIterator(){
+        public ArrayDequeIterator(){
             wizpos=0;
         }
         @Override
@@ -164,7 +164,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
 
     @Override
     public Iterator<Item> iterator(){
-        return new ArraySetIterator();
+        return new ArrayDequeIterator();
     }
 
     @Override
@@ -185,6 +185,13 @@ public class ArrayDeque<Item> implements Deque<Item> {
         for(int i=0;i<32;i++){
             array.addLast(i);
         }
+        array.printDeque();
+
+        Iterator<Integer> iterator=array.iterator();
+        while(iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
     }
 
 

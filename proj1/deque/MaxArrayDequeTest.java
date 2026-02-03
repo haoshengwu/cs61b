@@ -31,7 +31,7 @@ public class MaxArrayDequeTest {
         for(int i = 0; i < 10; i++) {
             array.addLast(i);
         }
-        System.out.println("The max value is " + array.Max());
+        System.out.println("The max value is " + array.max());
     }
 
 }

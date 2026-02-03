@@ -3,6 +3,8 @@ package deque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+
 public class LinkedListDeque<Item> implements  Deque<Item> {
     private static final Logger log = LoggerFactory.getLogger(LinkedListDeque.class);
     private Node<Item> sentinel;
@@ -120,6 +122,46 @@ public class LinkedListDeque<Item> implements  Deque<Item> {
         return getRecursiveHelp(index,sentinel.next);
     }
 
+
+    public class LinkedListIterator implements Iterator<Item> {
+        int wizpos;
+        public LinkedListIterator(){
+            wizpos=0;
+        }
+        @Override
+        public Item next() {
+            if(!hasNext()){
+                System.out.println("The Array is empty");
+            }else{
+                Item tmp=get(wizpos);
+                wizpos++;
+                return tmp;
+            }
+            return null;
+        }
+        @Override
+        public boolean hasNext() {
+            return wizpos < size;
+        }
+    }
+
+    @Override
+    public Iterator<Item> iterator(){
+        return new LinkedListDeque.LinkedListIterator();
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) { return true; }
+        if (o instanceof Deque) {
+            if (this.size != ((Deque)o).size()) { return false; }
+            for(int i=0;i<size;i++){
+                if (this.get(i).equals(((Deque)o).get(i))) { return true; }
+            }
+            return true;
+        }
+        return false;
+    }
     public static void main(String[] args) {
         LinkedListDeque<Integer> L1=new LinkedListDeque<>();
         System.out.println("Successfully create the Deque.");

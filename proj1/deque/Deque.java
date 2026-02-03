@@ -1,5 +1,7 @@
 package deque;
 
+import java.util.Iterator;
+
 public interface Deque<Item> {
 //    public boolean isEmpty();
     default public boolean isEmpty(){
@@ -16,6 +18,6 @@ public interface Deque<Item> {
     public Item removeLast();
     public void printDeque();
     public Item get(int index);
-
-
+    public Iterator<Item> iterator();
+    public boolean equals(Object o);
 }

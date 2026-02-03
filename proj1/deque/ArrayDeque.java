@@ -1,5 +1,7 @@
 package deque;
 
+import java.util.Iterator;
+
 public class ArrayDeque<Item> implements Deque<Item> {
     private int size=0;
     private int length;
@@ -109,9 +111,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         Item lastitem=items[nextLast];
         items[nextLast]=null;
         size--;
-
-
-
+        
         return lastitem;
     }
 
@@ -140,15 +140,51 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
 
-    
+   public class ArraySetIterator implements Iterator<Item> {
+        int wizpos;
+        public ArraySetIterator(){
+            wizpos=0;
+        }
+        @Override
+        public Item next() {
+            if(!hasNext()){
+                System.out.println("The Array is empty");
+            }else{
+                Item tmp=get(wizpos);
+                wizpos++;
+                return tmp;
+            }
+            return null;
+        }
+        @Override
+        public boolean hasNext() {
+            return wizpos < size;
+        }
+   }
+
+    @Override
+    public Iterator<Item> iterator(){
+        return new ArraySetIterator();
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) { return true; }
+        if (o instanceof Deque) {
+            if (this.size != ((Deque)o).size()) { return false; }
+            for(int i=0;i<size;i++){
+                if (this.get(i).equals(((Deque)o).get(i))) { return true; }
+            }
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args){
         ArrayDeque<Integer> array=new ArrayDeque<>();
         for(int i=0;i<32;i++){
             array.addLast(i);
         }
-
-
     }
 
 

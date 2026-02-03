@@ -14,15 +14,15 @@ public class ArrayDeque<Item> implements Deque<Item> {
         nextLast=4;
         nextFirst=3;
     }
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
 //    @Override
-//    public int size(){
-//        return size;
+//    public boolean isEmpty() {
+//        return size == 0;
 //    }
+
+    @Override
+    public int size(){
+        return size;
+    }
 
     private void resize(int cap) {
         Item[] newItems = (Item []) new Object[cap];

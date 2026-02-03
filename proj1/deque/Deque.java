@@ -2,8 +2,8 @@ package deque;
 
 public interface Deque<Item> {
 //    public boolean isEmpty();
-    default public boolean isEmpty(Deque<Item> deque){
-    if(deque.size()==0){
+    default public boolean isEmpty(){
+    if(this.size()==0){
         return true;
     }
     return false;

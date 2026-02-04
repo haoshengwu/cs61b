@@ -145,7 +145,7 @@ public class LinkedListDeque<Item> implements  Deque<Item> {
         }
     }
 
-    @Override
+
     public Iterator<Item> iterator(){
         return new LinkedListIterator();
     }

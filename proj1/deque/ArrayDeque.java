@@ -2,17 +2,17 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<Item> implements Deque<Item> {
+public class ArrayDeque<T> implements Deque<T> {
     private int size=0;
     private int length;
-    private Item[] items;
+    private T[] items;
     private int nextLast;
     private int nextFirst;
 
     public ArrayDeque() {
         size=0;
         length=8;
-        items=(Item []) new Object[length];
+        items=(T []) new Object[length];
         nextLast=4;
         nextFirst=3;
     }
@@ -27,7 +27,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     private void resize(int cap) {
-        Item[] newItems = (Item []) new Object[cap];
+        T[] newItems = (T []) new Object[cap];
 
         for(int i=0;i<=size-1;i++){
             newItems[i]=this.get(i);
@@ -40,7 +40,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     @Override
-    public void addFirst(Item item) {
+    public void addFirst(T item) {
         if(size==length){
             resize(length*2);
         }
@@ -53,7 +53,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     @Override
-    public void addLast(Item item) {
+    public void addLast(T item) {
         if(size==length){
             resize(length*2);
         }
@@ -66,7 +66,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     @Override
-    public Item removeFirst() {
+    public T removeFirst() {
         if(isEmpty()){
             System.out.println("The Array is empty");
             return null;
@@ -81,7 +81,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         if(nextFirst>length-1){
             nextFirst=0;
         }
-        Item firstitem=items[nextFirst];
+        T firstitem=items[nextFirst];
         size--;
         items[nextFirst]=null;
 
@@ -93,7 +93,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     @Override
-    public Item removeLast(){
+    public T removeLast(){
         if(isEmpty()){
             System.out.println("The Array is empty");
             return null;
@@ -108,7 +108,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         if(nextLast<0){
             nextLast=length-1;
         }
-        Item lastitem=items[nextLast];
+        T lastitem=items[nextLast];
         items[nextLast]=null;
         size--;
 
@@ -116,7 +116,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
     @Override
-    public Item get(int index){
+    public T get(int index){
         if(index > size-1){
             return null;
         }
@@ -140,17 +140,17 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
 
-   public class ArrayDequeIterator implements Iterator<Item> {
+   public class ArrayDequeIterator implements Iterator<T> {
         int wizpos;
         public ArrayDequeIterator(){
             wizpos=0;
         }
         @Override
-        public Item next() {
+        public T next() {
             if(!hasNext()){
                 System.out.println("The Array is empty");
             }else{
-                Item tmp=get(wizpos);
+                T tmp=get(wizpos);
                 wizpos++;
                 return tmp;
             }
@@ -163,8 +163,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
    }
 
 
-
-    public Iterator<Item> iterator(){
+    public Iterator<T> iterator(){
         return new ArrayDequeIterator();
     }
 

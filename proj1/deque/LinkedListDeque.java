@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements  Deque<T> {
+public class LinkedListDeque<T> implements Deque<T> {
     private static final Logger log = LoggerFactory.getLogger(LinkedListDeque.class);
     private Node<T> sentinel;
     private int size;
@@ -123,9 +123,9 @@ public class LinkedListDeque<T> implements  Deque<T> {
     }
 
 
-    public class LinkedListIterator implements Iterator<T> {
+    public class Iterable implements Iterator<T> {
         int wizpos;
-        public LinkedListIterator(){
+        public Iterable(){
             wizpos=0;
         }
         @Override
@@ -147,7 +147,7 @@ public class LinkedListDeque<T> implements  Deque<T> {
 
 
     public Iterator<T> iterator(){
-        return new LinkedListIterator();
+        return new Iterable();
     }
 
     @Override

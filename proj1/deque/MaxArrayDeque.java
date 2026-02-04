@@ -31,7 +31,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         } else  {
             T a = get(0);
             for(int i = 1; i < this.size(); i++){
-                if(c.compare(a, get(i))>0){
+                if(c.compare(a, get(i))<0){
                     a = get(i);
                 }
             }

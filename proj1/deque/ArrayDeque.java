@@ -140,9 +140,9 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
 
-   public class ArrayDequeIterator implements Iterator<T> {
+   public class Iterable implements Iterator<T> {
         int wizpos;
-        public ArrayDequeIterator(){
+        public Iterable(){
             wizpos=0;
         }
         @Override
@@ -164,7 +164,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
 
     public Iterator<T> iterator(){
-        return new ArrayDequeIterator();
+        return new Iterable();
     }
 
     @Override

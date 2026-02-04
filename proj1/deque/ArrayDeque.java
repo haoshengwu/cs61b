@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>,Iterable<T>  {
     private int size=0;
     private int length;
     private T[] items;
@@ -140,9 +140,9 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
 
-   public class Iterable implements Iterator<T> {
+   private class ADIerator implements Iterator<T> {
         int wizpos;
-        public Iterable(){
+        public ADIerator(){
             wizpos=0;
         }
         @Override
@@ -150,7 +150,7 @@ public class ArrayDeque<T> implements Deque<T> {
             if(!hasNext()){
                 System.out.println("The Array is empty");
             }else{
-                T tmp=get(wizpos);
+                T tmp=(T) get(wizpos);
                 wizpos++;
                 return tmp;
             }
@@ -164,7 +164,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
 
     public Iterator<T> iterator(){
-        return new Iterable();
+        return new ADIerator();
     }
 
     @Override
@@ -191,19 +191,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return true;
     }
 
-    public static void main(String[] args){
-        ArrayDeque<Integer> array=new ArrayDeque<>();
-        for(int i=0;i<32;i++){
-            array.addLast(i);
-        }
-        array.printDeque();
-
-        Iterator<Integer> iterator=array.iterator();
-        while(iterator.hasNext()) {
-            System.out.println(iterator.next());
-        }
-
-    }
 
 
 

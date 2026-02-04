@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Deque<T> {
+public class LinkedListDeque<T> implements Deque<T>,Iterable<T> {
     private static final Logger log = LoggerFactory.getLogger(LinkedListDeque.class);
     private Node<T> sentinel;
     private int size;
@@ -123,9 +123,9 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
 
-    public class Iterable implements Iterator<T> {
+    private class LLDIterator implements Iterator<T> {
         int wizpos;
-        public Iterable(){
+        public LLDIterator(){
             wizpos=0;
         }
         @Override
@@ -133,7 +133,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             if(!hasNext()){
                 System.out.println("The Array is empty");
             }else{
-                T tmp=get(wizpos);
+                T tmp= get(wizpos);
                 wizpos++;
                 return tmp;
             }
@@ -147,7 +147,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
 
     public Iterator<T> iterator(){
-        return new Iterable();
+        return new LLDIterator();
     }
 
     @Override
@@ -173,9 +173,5 @@ public class LinkedListDeque<T> implements Deque<T> {
 
         return true;
     }
-    public static void main(String[] args) {
-        LinkedListDeque<Integer> L1=new LinkedListDeque<>();
-        System.out.println("Successfully create the Deque.");
 
-    }
 }

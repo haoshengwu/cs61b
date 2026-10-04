@@ -147,7 +147,7 @@ public class Repository {
 
 
 
-    private static void commit_merge(String message, String secondparentID) {
+    private static void commit_merge(String message, Node secondparentnode) {
 
         FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
 
@@ -155,11 +155,21 @@ public class Repository {
 
         //Generate new commit based on head and update the treemap based on stageindex
         String parentID=commitTree.getHeaddata();
-        Commit commit = generate_commit_from_old(COMMIT_DIR,message,new Date(),parentID,secondparentID,stageindex);
+        Commit commit=null;
+        if(secondparentnode!=null){
+            commit = generate_commit_from_old(COMMIT_DIR,message,new Date(),parentID,secondparentnode.get_node_data(),stageindex);
+        }
+        else {
+            commit = generate_commit_from_old(COMMIT_DIR,message,new Date(),parentID,null,stageindex);
+        }
         commit.writeObject_HashValName(COMMIT_DIR);
 
         //update commitTree and also head
         commitTree.add_node_from_head(commit.commit_HashVal());
+
+        if(secondparentnode!=null){
+            secondparentnode.add_child(commitTree.getHead());
+        }
         commitTree.write_CommitTree(COMMITTREE_FILE);
 
         //write as blobs
@@ -169,8 +179,6 @@ public class Repository {
                 //do nothing
                 Blob blob=readBlob(join(STAGE_DIR,value));
                 blob.writeObject_HashValName(BLOB_DIR);
-            }else {
-                //TO DO
             }
         }
 
@@ -667,7 +675,7 @@ public class Repository {
         }
 
         //Final step
-        commit_merge("Merge "+branchname+"into "+commitTree.get_cur_branch(),branchcommit.commit_HashVal());
+        commit_merge("Merge "+branchname+"into "+commitTree.get_cur_branch(),branchnode);
         if(hasconflict){
             System.out.println("Encountered a merge conflict.");
         }

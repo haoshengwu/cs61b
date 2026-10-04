@@ -41,6 +41,9 @@ public class CommitTree implements Serializable {
         public int get_child_count(){
             return this.children.size();
         }
+        public void add_child(Node child){
+            this.children.add(child);
+        }
     }
 
     public Node get_branch_node(String key){
@@ -104,6 +107,8 @@ public class CommitTree implements Serializable {
         head.children.add(node);
         head = node;
     }
+
+
 
     public void write_CommitTree(File file){
         writeObject(file, (Serializable) this);

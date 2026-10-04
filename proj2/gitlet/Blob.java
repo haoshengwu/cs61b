@@ -29,7 +29,13 @@ public class Blob implements Serializable{
         this.hash_value=sha1(filename, (Object) contents);
     }
 
-    public static Blob readBlob(File file){
+    public Blob(String filename, byte[] contents) {
+        this.name=filename;
+        this.contents=contents;
+        this.hash_value=sha1(filename, (Object) contents);
+    }
+
+        public static Blob readBlob(File file){
         if(!file.exists()){
             throw new GitletException(
                     String.format("File does not exist in readBlob."));
@@ -52,9 +58,6 @@ public class Blob implements Serializable{
         return name;
     }
     public byte[] getcontents() {
-        return contents;
-    }
-    public byte[] getContents() {
         return contents;
     }
 

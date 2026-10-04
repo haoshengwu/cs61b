@@ -72,6 +72,26 @@ public class Main {
                 Repository.checkout(args);
                 break;
 
+            case "branch":
+                validateNumArgs("commit", args, 2);
+                Repository.branch(args[1]);
+                break;
+                
+            case "rm-branch":
+                validateNumArgs("commit", args, 2);
+                Repository.rm_branch(args[1]);
+                break;
+
+            case "reset":
+                validateNumArgs("commit", args, 2);
+                Repository.reset(args[1]);
+                break;
+
+            case "merge":
+                validateNumArgs("commit", args, 2);
+                Repository.merge(args[1]);
+                break;
+
             default:
                 throw new GitletException(
                         String.format("Unkown CMD: %s.", args[0]));

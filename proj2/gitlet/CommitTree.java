@@ -37,8 +37,29 @@ public class CommitTree implements Serializable {
         public String get_node_data(){
             return this.data;
         }
+
+        public int get_child_count(){
+            return this.children.size();
+        }
     }
 
+    public Node get_branch_node(String key){
+        return this.branches.get(key);
+    }
+
+    public void set_head_by_commitID(String commitID){
+        set_head_by_commitID_help(this.root, commitID);
+    }
+
+    private void set_head_by_commitID_help(Node current_node, String commitID){
+        if(current_node.data.equals(commitID)){
+            this.head = current_node;
+        }else {
+            for(Node child : current_node.children){
+                set_head_by_commitID_help(child,commitID);
+            }
+        }
+    }
 
     public Node getHead() {
         return head;
@@ -53,6 +74,27 @@ public class CommitTree implements Serializable {
 
     public String get_cur_branch(){
         return cur_branch;
+    }
+
+    public Node get_cur_branch_node(){
+        return this.get_branch_node(this.cur_branch);
+    }
+
+    public void update_branch(String branchname){
+        this.cur_branch = branchname;
+        this.head = branches.get(branchname);
+    }
+
+    public boolean branch_exist(String branch){
+        return branches.containsKey(branch);
+    }
+
+    public void add_branch(String branch){
+        this.branches.put(branch, head);
+    }
+
+    public void remove_branch(String branch){
+        this.branches.remove(branch);
     }
 
     //add a new node based on head and then move head to the new node
@@ -70,5 +112,6 @@ public class CommitTree implements Serializable {
     public static CommitTree read_CommitTree(File file){
         return readObject(file, CommitTree.class);
     }
+
 
 }

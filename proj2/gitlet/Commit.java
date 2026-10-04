@@ -84,13 +84,14 @@ public class Commit implements Serializable{
 
     public static Commit generate_commit_from_old(File DIR,
                                            String message, Date timestamp, String parentID,
+                                           String secondparentID,
                                            HashMap<String, String> stageindex){
         File file=join(DIR, parentID);
         Commit newcommit = readCommit(file);
         newcommit.message=message;
         newcommit.timestamp = timestamp;
         newcommit.parentID = parentID;
-        newcommit.secondparentID = null;
+        newcommit.secondparentID = secondparentID;
         newcommit.update_commit_filetree(stageindex);
         return newcommit;
     }

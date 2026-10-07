@@ -8,6 +8,7 @@ import static gitlet.CommitTree.*;
 import static gitlet.Utils.*;
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -254,12 +255,13 @@ public class Repository {
         String parentID=commit.get_parentID();
         String secondparentID=commit.get_secondparentID();
         if(secondparentID!=null){
-            System.out.println("Merge: "+ parentID.substring(0, 7) + secondparentID.substring(0, 7));
+            System.out.println("Merge: "+ parentID.substring(0, 7) +  " " + secondparentID.substring(0, 7));
         }
-        String customDate = new Formatter()
-                .format("Date: %1$ta %1$tb %1$te %1$tT %1$tY %1$tz", date)
-                .toString();
-        System.out.println(customDate);
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+        System.out.println("Date: " + dateFormat.format(date));
+
         System.out.println(commit.get_message());
         System.out.println();
     }
@@ -297,10 +299,12 @@ public class Repository {
                 if(!key.equals("commitTree")){
                     Commit commit= readCommit(join(COMMIT_DIR,key));
                     String message1=commit.get_message();
-                    if(message.contains(message1)){
+                    //System.out.println(message1);
+                    if(message1.contains(message)){
                         found=true;
+                        System.out.println(key);
                     }
-                    System.out.println(key);
+
                 }
             }
         }
@@ -504,9 +508,9 @@ public class Repository {
         //Delete Starge
         deleteStagedFiles();
 
-        //Set head
+        //Set current branch head
         commitTree.set_cur_branch_node_to_commitID(commitID);
-
+        commitTree.set_head_by_commitID(commitID);
     }
 
 

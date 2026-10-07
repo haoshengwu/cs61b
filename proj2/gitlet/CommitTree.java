@@ -127,8 +127,6 @@ public class CommitTree implements Serializable {
         head = node;
     }
 
-
-
     public void write_CommitTree(File file){
         writeObject(file, (Serializable) this);
     }

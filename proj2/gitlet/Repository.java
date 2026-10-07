@@ -214,26 +214,29 @@ public class Repository {
 
         //Blob name (Hash value) from stageindex tree
         String s2= stageindex.get(filename);
-
+//        System.out.println(s1);
+//        System.out.println(s2);
         if(s1 == null && s2 == null){
             System.out.println("No reason to remove the file.");
             System.exit(3);
         }
 
         //Unstage
-        if(s1 != null){
+        if(s2 != null){
             File file = join(STAGE_DIR, stageindex.get(filename));
             file.delete();
             stageindex.remove(filename);
         }
 
-        if(s2!=null){
+        if(s1 != null){
             stageindex.put(filename,"removal");
             File file = join(CWD,filename);
-            if(!file.exists()){
+            if(file.exists()){
                 restrictedDelete(file);
             }
         }
+        writeObject(STAGE_INDEX,stageindex);
+
         return;
     }
 

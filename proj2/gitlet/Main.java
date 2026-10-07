@@ -40,31 +40,32 @@ public class Main {
 
             case "commit":
                 validateNumArgs("commit", args, 2);
+
                 Repository.commit(args[1]);
                 break;
 
             case "rm":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("rm", args, 2);
                 Repository.rm(args[1]);
                 break;
 
             case "log":
-                validateNumArgs("commit", args, 1);
+                validateNumArgs("log", args, 1);
                 Repository.log();
                 break;
 
             case "global-log":
-                validateNumArgs("commit", args, 1);
+                validateNumArgs("global-log", args, 1);
                 Repository.global_log();
                 break;
 
             case "find":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("find", args, 2);
                 Repository.find(args[1]);
                 break;
 
             case "status":
-                validateNumArgs("commit", args, 1);
+                validateNumArgs("status", args, 1);
                 Repository.status();
                 break;
 
@@ -73,22 +74,22 @@ public class Main {
                 break;
 
             case "branch":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("branch", args, 2);
                 Repository.branch(args[1]);
                 break;
                 
             case "rm-branch":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("rm-branch", args, 2);
                 Repository.rm_branch(args[1]);
                 break;
 
             case "reset":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("reset", args, 2);
                 Repository.reset(args[1]);
                 break;
 
             case "merge":
-                validateNumArgs("commit", args, 2);
+                validateNumArgs("merge", args, 2);
                 Repository.merge(args[1]);
                 break;
 

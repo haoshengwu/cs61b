@@ -85,8 +85,8 @@ public class Repository {
         /* 1. Check whether this file exist or not*/
         final File TARGETFILE = join(CWD, filename);
         if(!TARGETFILE.exists()){
-            throw new GitletException(
-                    String.format("File does not exist."));
+            System.out.println("File does not exist.");
+            System.exit(0);
         }
 
         FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
@@ -129,18 +129,17 @@ public class Repository {
         //Read stage index
         FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
 
+        if(message == null || message.isEmpty()){
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
+
         if(stageindex.isEmpty()){
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
 
         //Check message
-        if(message == null || message.isEmpty()){
-//            throw new GitletException(
-//                    String.format("File does not exist."));
-            System.out.println("File does not exist.");
-            System.exit(0);
-        }
 
         commit_merge(message,null);
     }
@@ -288,7 +287,7 @@ public class Repository {
             }
         }
     }
-
+    
     /** find command */
     public static void find(String message) {
         boolean found=false;

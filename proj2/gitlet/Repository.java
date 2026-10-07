@@ -287,7 +287,7 @@ public class Repository {
             }
         }
     }
-    
+
     /** find command */
     public static void find(String message) {
         boolean found=false;
@@ -443,7 +443,7 @@ public class Repository {
             Blob blob_for_check=new Blob(CWD,filename);
             String val=blob_for_check.get_Hashval();
             File file_for_check=join(BLOB_DIR,val);
-            //if not commit, then erro
+            //if not commit, then error
             if(!file_for_check.exists()){
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
@@ -452,7 +452,8 @@ public class Repository {
             if(fileTree.containsKey(filename)){
                 write_file_from_commit(commit,filename);
             }else{
-                restrictedDelete(join(BLOB_DIR,filename));
+                File file=(join(CWD,filename));
+                file.delete();
             }
         }
     }
@@ -504,7 +505,7 @@ public class Repository {
         deleteStagedFiles();
 
         //Set head
-        commitTree.set_head_by_commitID(commitID);
+        commitTree.set_cur_branch_node_to_commitID(commitID);
 
     }
 

@@ -50,6 +50,25 @@ public class CommitTree implements Serializable {
         return this.branches.get(key);
     }
 
+    public void set_cur_branch_node_to_commitID(String commitID){
+        Node node = get_node_by_commitID(this.root,commitID);
+        this.branches.put(this.cur_branch, node);
+    }
+
+    public Node get_node_by_commitID(Node node, String commitID) {
+        Node temp;
+        temp = node;
+        if (node.data.equals(commitID)) {
+            return node;
+        } else {
+            for (Node child : node.children) {
+                get_node_by_commitID(child, commitID);
+            }
+        }
+        return temp;
+    }
+
+
     public void set_head_by_commitID(String commitID){
         set_head_by_commitID_help(this.root, commitID);
     }

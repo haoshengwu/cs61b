@@ -131,7 +131,7 @@ public class Repository {
 
         if(stageindex.isEmpty()){
             System.out.println("No changes added to the commit.");
-            System.exit(1);
+            System.exit(0);
         }
 
         //Check message
@@ -139,7 +139,7 @@ public class Repository {
 //            throw new GitletException(
 //                    String.format("File does not exist."));
             System.out.println("File does not exist.");
-            System.exit(2);
+            System.exit(0);
         }
 
         commit_merge(message,null);
@@ -218,7 +218,7 @@ public class Repository {
 //        System.out.println(s2);
         if(s1 == null && s2 == null){
             System.out.println("No reason to remove the file.");
-            System.exit(3);
+            System.exit(0);
         }
 
         //Unstage
@@ -307,7 +307,7 @@ public class Repository {
         }
         if(!found){
             System.out.println("Found no commit with that message.");
-            System.exit(4);
+            System.exit(0);
         }
 
     }
@@ -388,7 +388,7 @@ public class Repository {
 //        System.out.println("blobId: "+blobId);
         if(blobId==null){
             System.out.println("File does not exist in that commit.");
-            System.exit(5);
+            System.exit(0);
         }
         Blob blob = readBlob(join(BLOB_DIR,blobId));
         blob.writeContents_Filename(CWD);
@@ -412,7 +412,7 @@ public class Repository {
                 write_file_from_commit(commit,arg[3]);
             }else{
                 System.out.println("No commit with that id exists.");
-                System.exit(6);
+                System.exit(0);
             }
         } else if (arg.length == 2 ) {
             CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
@@ -425,14 +425,14 @@ public class Repository {
                 commitTree.update_branch(arg[1]);
             } else if ((arg[1].equals(commitTree.get_cur_branch()))){
                 System.out.println("No need to checkout the current branch.");
-                System.exit(6);
+                System.exit(0);
             } else {
                 System.out.println("No such branch exists.");
-                System.exit(7);
+                System.exit(0);
             }
         } else {
             System.out.println("Unexpected argument.");
-            System.exit(8);
+            System.exit(0);
         }
     }
 
@@ -447,7 +447,7 @@ public class Repository {
             //if not commit, then erro
             if(!file_for_check.exists()){
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                System.exit(5);
+                System.exit(0);
             }
             //if in the
             if(fileTree.containsKey(filename)){
@@ -464,7 +464,7 @@ public class Repository {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         if(commitTree.branch_exist(branchname)){
             System.out.println("A branch with that name already exists.");
-            System.exit(9);
+            System.exit(0);
         }
         commitTree.add_branch(branchname);
         commitTree.write_CommitTree(COMMITTREE_FILE);
@@ -475,11 +475,11 @@ public class Repository {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         if(!commitTree.branch_exist(branchname)){
             System.out.println("A branch with that name does not exist.");
-            System.exit(10);
+            System.exit(0);
         }
         if(commitTree.get_cur_branch().equals(branchname)){
             System.out.println("Cannot remove the current branch.");
-            System.exit(11);
+            System.exit(0);
         }
         commitTree.remove_branch(branchname);
         commitTree.write_CommitTree(COMMITTREE_FILE);
@@ -492,7 +492,7 @@ public class Repository {
         File commitfile=join(COMMIT_DIR,commitID);
         if(!commitfile.exists()){
             System.out.println("No commit with that id exists.");
-            System.exit(12);
+            System.exit(0);
         }
         Commit current_commit= readCommit(commitfile);
 

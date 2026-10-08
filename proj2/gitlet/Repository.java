@@ -445,6 +445,7 @@ public class Repository {
                 String commitID=branch.get_node_data();
                 Commit commit= readCommit(join(COMMIT_DIR,commitID));
                 checkout_commit(commit);
+                commitTree.set_cur_branch_name(arg[1]);
                 commitTree.set_cur_branch_node_to_commitID(commitID);
                 commitTree.set_head_by_commitID(commitID);
                 commitTree.write_CommitTree(COMMITTREE_FILE);
@@ -479,15 +480,21 @@ public class Repository {
                 System.exit(0);
             }
             //if in the
-            if(!fileTree.containsKey(filename)){
+            if(fileTree==null){
+                File file=(join(CWD,filename));
+                file.delete();
+            } else if(!fileTree.containsKey(filename)){
                 File file=(join(CWD,filename));
                 file.delete();
             }
         }
-        for(String key : fileTree.keySet()){
-            Blob blot_to_write=Blob.readBlob(join(BLOB_DIR,fileTree.get(key)));
-            blot_to_write.writeContents_Filename(CWD);
+        if(fileTree!=null){
+            for(String key : fileTree.keySet()){
+                Blob blot_to_write=Blob.readBlob(join(BLOB_DIR,fileTree.get(key)));
+                blot_to_write.writeContents_Filename(CWD);
+            }
         }
+
     }
 
 
@@ -712,9 +719,11 @@ public class Repository {
 
         //Final step
         commit_merge("Merge "+branchname+"into "+commitTree.get_cur_branch(),branchnode);
+        commitTree.write_CommitTree(COMMITTREE_FILE);
         if(hasconflict){
             System.out.println("Encountered a merge conflict.");
         }
+
 
     }
 

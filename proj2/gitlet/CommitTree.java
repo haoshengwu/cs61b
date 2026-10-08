@@ -102,7 +102,7 @@ public class CommitTree implements Serializable {
         return this.get_branch_node(this.cur_branch);
     }
 
-    public void update_cur_branch_name(String branchname){
+    public void set_cur_branch_name(String branchname){
         this.cur_branch = branchname;
     }
 

@@ -146,7 +146,6 @@ public class Repository {
         }
 
         //Check message
-
         commit_merge(message,null);
     }
 
@@ -167,14 +166,16 @@ public class Repository {
         else {
             commit = generate_commit_from_old(COMMIT_DIR,message,new Date(),parentID,null,stageindex);
         }
+
         commit.writeObject_HashValName(COMMIT_DIR);
 
         //update commitTree and also head
         commitTree.add_node_from_head(commit.commit_HashVal());
 
-        if(secondparentnode!=null){
-            secondparentnode.add_child(commitTree.getHead());
-        }
+
+//        if(secondparentnode!=null){
+//            secondparentnode.add_child(commitTree.getHead());
+//        }
         commitTree.write_CommitTree(COMMITTREE_FILE);
 
         //write as blobs
@@ -417,7 +418,11 @@ public class Repository {
             String headcommitID=commitTree.getHeaddata();
             Commit commit= readCommit(join(COMMIT_DIR,headcommitID));
             write_file_from_commit(commit, arg[2]);
-        } else if (arg.length == 4 && (arg[2].equals("--"))) {
+        } else if (arg.length == 4 ) {
+            if(!arg[2].equals("--")){
+                System.out.println("Incorrect operands.");
+                System.exit(0);
+            }
             File commitfile=join(COMMIT_DIR,arg[1]);
             if(commitfile.exists()){
                 Commit commit= readCommit(commitfile);
@@ -429,15 +434,26 @@ public class Repository {
         } else if (arg.length == 2 ) {
             CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
             HashMap<String,Node> branchs = commitTree.getBranches();
+
+            if ((arg[1].equals(commitTree.get_cur_branch()))){
+                System.out.println("No need to checkout the current branch.");
+                System.exit(0);
+            }
+
             if(branchs.containsKey(arg[1])){
                 Node branch=branchs.get(arg[1]);
                 String commitID=branch.get_node_data();
                 Commit commit= readCommit(join(COMMIT_DIR,commitID));
                 checkout_commit(commit);
-                commitTree.update_branch(arg[1]);
-            } else if ((arg[1].equals(commitTree.get_cur_branch()))){
-                System.out.println("No need to checkout the current branch.");
-                System.exit(0);
+                commitTree.set_cur_branch_node_to_commitID(commitID);
+                commitTree.set_head_by_commitID(commitID);
+                commitTree.write_CommitTree(COMMITTREE_FILE);
+
+                //Empty stageindex, write stageindex and clear staged area
+                FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
+                stageindex.clear();
+                writeObject(STAGE_INDEX,stageindex);
+                deleteStagedFiles();
             } else {
                 System.out.println("No such branch exists.");
                 System.exit(0);
@@ -559,8 +575,7 @@ public class Repository {
             }
         }
     }
-
-
+    
     /** merge command */
     public static void merge(String branchname) {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);

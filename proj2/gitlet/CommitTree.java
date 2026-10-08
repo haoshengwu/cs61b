@@ -102,10 +102,10 @@ public class CommitTree implements Serializable {
         return this.get_branch_node(this.cur_branch);
     }
 
-    public void update_branch(String branchname){
+    public void update_cur_branch_name(String branchname){
         this.cur_branch = branchname;
-        this.head = branches.get(branchname);
     }
+
 
     public boolean branch_exist(String branch){
         return branches.containsKey(branch);
@@ -125,6 +125,7 @@ public class CommitTree implements Serializable {
         node.parent = head;
         head.children.add(node);
         head = node;
+        this.branches.put(this.cur_branch, head);
     }
 
     public void write_CommitTree(File file){

@@ -539,6 +539,8 @@ public class Repository {
         //Set current branch head
         commitTree.set_cur_branch_node_to_commitID(commitID);
         commitTree.set_head_by_commitID(commitID);
+
+        commitTree.write_CommitTree(COMMITTREE_FILE);
     }
 
 
@@ -575,7 +577,7 @@ public class Repository {
             }
         }
     }
-    
+
     /** merge command */
     public static void merge(String branchname) {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);

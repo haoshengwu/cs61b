@@ -50,15 +50,15 @@ public class Blob implements Serializable{
     }
 
     public void writeContents_Filename(File DIR) {
-        File file = join(DIR, name);
+        File file = join(DIR, this.name);
         writeContents(file,(Serializable)this.contents);
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
     public byte[] getcontents() {
-        return contents;
+        return this.contents;
     }
 
     public String get_Hashval() {

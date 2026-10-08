@@ -451,6 +451,7 @@ public class Repository {
     private static void checkout_commit(Commit commit){
         FileTree fileTree=commit.get_file_tree();
         List<String> list=plainFilenamesIn(CWD);
+        //Check all files in CWD
         for(String filename : list){
             //check whether there is blob
             Blob blob_for_check=new Blob(CWD,filename);
@@ -462,12 +463,14 @@ public class Repository {
                 System.exit(0);
             }
             //if in the
-            if(fileTree.containsKey(filename)){
-                write_file_from_commit(commit,filename);
-            }else{
+            if(!fileTree.containsKey(filename)){
                 File file=(join(CWD,filename));
                 file.delete();
             }
+        }
+        for(String key : fileTree.keySet()){
+            Blob blot_to_write=Blob.readBlob(join(BLOB_DIR,fileTree.get(key)));
+            blot_to_write.writeContents_Filename(CWD);
         }
     }
 

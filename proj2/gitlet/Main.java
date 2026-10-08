@@ -14,9 +14,8 @@ public class Main {
         // TODO: what if args is empty?
 
         if(args==null || args.length==0){
-            throw new GitletException(
-                    String.format("Must provide at least one command line argument:" +
-                            "init"));
+            System.out.println("Please enter a command.");
+            System.exit(0);
         }
         String firstArg = args[0];
         switch(firstArg) {
@@ -94,8 +93,7 @@ public class Main {
                 break;
 
             default:
-                throw new GitletException(
-                        String.format("Unkown CMD: %s.", args[0]));
+                System.out.println("No command with that name exists.");
 
         }
     }

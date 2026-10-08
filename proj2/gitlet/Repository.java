@@ -47,7 +47,12 @@ public class Repository {
 
     public static final File COMMITTREE_FILE = join(COMMIT_DIR, "commitTree");
 
-
+    private static void check_GITLET_DIR(){
+        if(!GITLET_DIR.exists()){
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+    }
 
     /* TODO: fill in the rest of this class. */
 
@@ -403,7 +408,11 @@ public class Repository {
     public static void checkout(String[] arg) {
         //System.out.println(arg.length);
 
-        if(arg.length == 3 && (arg[1].equals("--"))){
+        if(arg.length == 3){
+            if(!arg[1].equals("--")){
+                System.out.println("Incorrect operands.");
+                System.exit(0);
+            }
             CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
             String headcommitID=commitTree.getHeaddata();
             Commit commit= readCommit(join(COMMIT_DIR,headcommitID));

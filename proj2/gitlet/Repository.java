@@ -654,7 +654,7 @@ public class Repository {
                     continue;
                 }
             }
-            if (hashval_current == null && hashval_branch != null && hashval_splitpoint != null) {
+            else if (hashval_current == null && hashval_branch != null && hashval_splitpoint != null) {
                 if (!hashval_branch.equals(hashval_splitpoint)) {
                     //Situation 8
                     conflict(currentfiletree,branchfiletree,key);
@@ -673,7 +673,7 @@ public class Repository {
 
             //System.out.println("File: "+key);
 
-            if (hashval_branch != null && hashval_current != null && hashval_splitpoint != null) {
+            if (hashval_current != null && hashval_branch != null &&  hashval_splitpoint != null) {
                 if (!hashval_branch.equals(hashval_splitpoint) && hashval_current.equals(hashval_splitpoint)) {
                     //Situation 1
                     Blob blob = readBlob(join(BLOB_DIR, hashval_branch));
@@ -687,37 +687,37 @@ public class Repository {
                     //Situation 3.1
                     continue;
                     //keep
+                } else if (!hashval_branch.equals(hashval_current) &&
+                        !hashval_branch.equals(hashval_splitpoint) &&
+                        !hashval_current.equals(hashval_splitpoint)) {
+                    conflict(currentfiletree, branchfiletree, key);
+                    hasconflict = true;
                 }
-            } else if (hashval_current != null && (hashval_splitpoint == null) && (hashval_branch == null)) {
+
+            } else if (hashval_current != null  && hashval_branch == null && hashval_splitpoint == null) {
                 //Situation 4
                 break;
-            } else if (hashval_splitpoint != null && !(hashval_current == null) && (hashval_branch == null)) {
+            } else if ( hashval_current != null && hashval_branch == null && hashval_splitpoint != null) {
                 if (hashval_splitpoint.equals(hashval_current)) {
                     //Situation 6
-                    FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
-                    stageindex.put(key,"removal");
-                    File file = join(CWD,key);
+                    FileHashMap stageindex = readObject(STAGE_INDEX, FileHashMap.class);
+                    stageindex.put(key, "removal");
+                    File file = join(CWD, key);
                     restrictedDelete(file);
+                }  else if (!hashval_current.equals(hashval_splitpoint)) {
+                    conflict(currentfiletree, branchfiletree, key);
+                    hasconflict = true;
                 }
-                if (hashval_branch != null && !(hashval_current == null) && !(hashval_splitpoint == null)) {
-                    if (!hashval_branch.equals(hashval_current) && !hashval_branch.equals(hashval_splitpoint) && !hashval_current.equals(hashval_splitpoint)) {
-                        conflict(currentfiletree,branchfiletree,key);
-                        hasconflict=true;
-                    }
-                } else if (hashval_branch == null && hashval_current != null && hashval_splitpoint != null) {
-                    if (!hashval_current.equals(hashval_splitpoint)) {
-                        conflict(currentfiletree,branchfiletree,key);
-                        hasconflict=true;
-                    }
-                } else if (hashval_splitpoint == null && hashval_branch != null && hashval_current != null) {
-                    if (!hashval_branch.equals(hashval_current)) {
-                        conflict(currentfiletree,branchfiletree,key);
-                        hasconflict=true;
-                    }
+            } else if (hashval_current != null && hashval_branch != null && hashval_splitpoint == null) {
+                if (!hashval_branch.equals(hashval_current)) {
+                    conflict(currentfiletree, branchfiletree, key);
+                    hasconflict = true;
                 }
             }
+
         }
         List<String> list=plainFilenamesIn(CWD);
+
         for(String filename : list){
             if(!branchfiletree.containsKey(filename) && !currentfiletree.containsKey(filename)){
                 //Situation 3.2
@@ -740,7 +740,7 @@ public class Repository {
         }
 
         //Final step
-        commit_merge("Merged "+branchname+" into "+commitTree.get_cur_branch()+"\\.",branchnode);
+        commit_merge("Merged "+branchname+" into "+commitTree.get_cur_branch()+".",branchnode);
 
         //System.out.println("Merge "+branchname+"into "+commitTree.get_cur_branch());
         if(hasconflict){
@@ -769,11 +769,11 @@ public class Repository {
         String mid  ="=======\n";
         String end  ="<<<<<<<\n";
         byte[] total = null;
-        if(currentblob==null && !(branchblob==null)){
+        if(currentblob==null && branchblob != null){
             total=concat(start.getBytes(),mid.getBytes(),branchblob.getcontents(),end.getBytes());
-        }else if(!(currentblob==null) && branchblob==null){
+        }else if(currentblob != null && branchblob == null){
             total=concat(start.getBytes(),currentblob.getcontents(),mid.getBytes(),end.getBytes());
-        }else if(!(currentblob==null) && !(branchblob==null)){
+        }else if(currentblob != null && branchblob != null){
             total=concat(start.getBytes(),currentblob.getcontents(),mid.getBytes(),branchblob.getcontents(),end.getBytes());
         }
         Blob new_blob=new Blob(filename,total);

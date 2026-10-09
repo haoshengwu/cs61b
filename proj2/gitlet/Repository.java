@@ -436,8 +436,10 @@ public class Repository {
             String id = "";
             CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
 
-            if(arg[1].length()<40){
+            if(arg[1].length()<10){
                 id=commitTree.get_full_commitID(arg[1]);
+            }else{
+                id=arg[1];
             }
             //System.out.println(id);
             File commitfile=join(COMMIT_DIR,id);

@@ -87,7 +87,7 @@ public class Repository {
 
     /** add command */
     public static void addCommand(String filename){
-
+        check_GITLET_DIR();
         /* 1. Check whether this file exist or not*/
         final File TARGETFILE = join(CWD, filename);
         if(!TARGETFILE.exists()){
@@ -132,6 +132,7 @@ public class Repository {
 
     /** commit command */
     public static void commit(String message) {
+        check_GITLET_DIR();
         //Read stage index
         FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
 
@@ -212,6 +213,7 @@ public class Repository {
 
     /** rm command */
     public static void rm(String filename){
+        check_GITLET_DIR();
         //Read stageindex and commitTree
         FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
@@ -250,6 +252,7 @@ public class Repository {
 
     /** log command */
     public static void log() {
+        check_GITLET_DIR();
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         log_node(commitTree.getHead());
     }
@@ -288,6 +291,7 @@ public class Repository {
     /** global-log commad */
     public static void global_log() {
         //delete files in STAGE_DIR
+        check_GITLET_DIR();
         List<String> list=plainFilenamesIn(COMMIT_DIR);
         if(!list.isEmpty()){
             for(String key : list){
@@ -300,6 +304,7 @@ public class Repository {
 
     /** find command */
     public static void find(String message) {
+        check_GITLET_DIR();
         boolean found=false;
         List<String> list=plainFilenamesIn(COMMIT_DIR);
         if(!list.isEmpty()){
@@ -325,6 +330,7 @@ public class Repository {
 
     /** status command */
     public static void status() {
+        check_GITLET_DIR();
         /** Read commit tree */
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         ArrayList<String> branchsArrList= new ArrayList<String>();
@@ -410,7 +416,7 @@ public class Repository {
     /** checkout command */
     public static void checkout(String[] arg) {
         //System.out.println(arg.length);
-
+        check_GITLET_DIR();
         if(arg.length == 3){
             if(!arg[1].equals("--")){
                 System.out.println("Incorrect operands.");
@@ -501,6 +507,7 @@ public class Repository {
 
     /** branch command */
     public static void branch(String branchname) {
+        check_GITLET_DIR();
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         if(commitTree.branch_exist(branchname)){
             System.out.println("A branch with that name already exists.");
@@ -512,6 +519,7 @@ public class Repository {
 
     /** rm-branch command */
     public static void rm_branch(String branchname) {
+        check_GITLET_DIR();
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         if(!commitTree.branch_exist(branchname)){
             System.out.println("A branch with that name does not exist.");
@@ -528,13 +536,26 @@ public class Repository {
 
     /** reset command */
     public static void reset(String commitID){
+        check_GITLET_DIR();
         //check and read commit
         File commitfile=join(COMMIT_DIR,commitID);
+        FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
+
         if(!commitfile.exists()){
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
         Commit current_commit= readCommit(commitfile);
+        FileTree fileTree=current_commit.get_file_tree();
+
+        List<String> list=plainFilenamesIn(CWD);
+        //delete file not in the commit
+        for(String filename : list) {
+            if(!fileTree.containsKey(filename)){
+                File file=join(CWD,filename);
+                file.delete();
+            }
+        }
 
         //Read commitTree
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
@@ -542,6 +563,8 @@ public class Repository {
         checkout_commit(current_commit);
 
         //Delete Starge
+        stageindex.clear();
+        writeObject(STAGE_INDEX,stageindex);
         deleteStagedFiles();
 
         //Set current branch head
@@ -557,17 +580,18 @@ public class Repository {
     private static Node split_point(Node node1, Node node2){
         HashMap<String,Node> map=new HashMap<>();
         Node current_node=node1;
+
         while(current_node != null){
- //           System.out.println(current_node.get_node_data());
+            //System.out.println("node1 "+current_node.get_node_data());
             map.put(current_node.get_node_data(),current_node);
             current_node=current_node.get_node_parent();
         }
 
         Node node_tmp=node2;
         while(node_tmp != null){
-            //System.out.println(current_node.get_node_data());
+            //System.out.println("node2 "+ node_tmp.get_node_data());
             if(map.containsKey(node_tmp.get_node_data())){
-                break;
+                return node_tmp;
             }
             node_tmp=node_tmp.get_node_parent();
         }
@@ -589,8 +613,10 @@ public class Repository {
 
     /** merge command */
     public static void merge(String branchname) {
+        check_GITLET_DIR();
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         //commitTree.print_commitTree();
+
         //commitTree.print_commitTree_branches();
         FileHashMap stageindex = readObject(STAGE_INDEX, FileHashMap.class);
         if(!stageindex.isEmpty()){
@@ -623,7 +649,7 @@ public class Repository {
 
 
         /** Find the split point */
-        Node split_point = split_point(branchnode, currentnode);
+        Node split_point = split_point(currentnode, branchnode);
 
         //System.out.println("Current Node: "+currentnode.get_node_data());
         //System.out.println("Branch Node: "+branchnode.get_node_data());

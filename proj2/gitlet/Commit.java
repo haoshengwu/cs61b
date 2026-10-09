@@ -42,7 +42,11 @@ public class Commit implements Serializable{
         this.timestamp  = timestamp;
         this.parentID = parentID;
         this.secondparentID = secondparentID;
-        this.fileTree = fileTree;
+        if(fileTree == null) {
+            this.fileTree = new FileTree();
+        } else {
+            this.fileTree = fileTree;
+        }
     }
 
     public static Commit readCommit(File file) {

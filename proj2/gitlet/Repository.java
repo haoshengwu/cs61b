@@ -655,6 +655,7 @@ public class Repository {
                 }
             }
             else if (hashval_current == null && hashval_branch != null && hashval_splitpoint != null) {
+                //one are changed and the other file is deleted
                 if (!hashval_branch.equals(hashval_splitpoint)) {
                     //Situation 8
                     conflict(currentfiletree,branchfiletree,key);
@@ -690,6 +691,7 @@ public class Repository {
                 } else if (!hashval_branch.equals(hashval_current) &&
                         !hashval_branch.equals(hashval_splitpoint) &&
                         !hashval_current.equals(hashval_splitpoint)) {
+                    //both are changed and different from other
                     conflict(currentfiletree, branchfiletree, key);
                     hasconflict = true;
                 }
@@ -705,10 +707,12 @@ public class Repository {
                     File file = join(CWD, key);
                     restrictedDelete(file);
                 }  else if (!hashval_current.equals(hashval_splitpoint)) {
+                    //one are changed and the other file is deleted
                     conflict(currentfiletree, branchfiletree, key);
                     hasconflict = true;
                 }
             } else if (hashval_current != null && hashval_branch != null && hashval_splitpoint == null) {
+                // absent at the split point and has different contents in the given and current branches
                 if (!hashval_branch.equals(hashval_current)) {
                     conflict(currentfiletree, branchfiletree, key);
                     hasconflict = true;
@@ -753,7 +757,7 @@ public class Repository {
     private static void conflict (FileTree currentfiletree, FileTree branchfiletree, String filename){
         Blob currentblob;
         Blob branchblob;
-
+        //System.out.println("Conflicting file: "+filename);
         if(currentfiletree.containsKey(filename)){
             currentblob= readBlob(join(BLOB_DIR, currentfiletree.get(filename)));
         } else {
@@ -767,7 +771,7 @@ public class Repository {
         }
         String start="<<<<<<< HEAD\n";
         String mid  ="=======\n";
-        String end  ="<<<<<<<\n";
+        String end  =">>>>>>>\n";
         byte[] total = null;
         if(currentblob==null && branchblob != null){
             total=concat(start.getBytes(),mid.getBytes(),branchblob.getcontents(),end.getBytes());
@@ -776,8 +780,12 @@ public class Repository {
         }else if(currentblob != null && branchblob != null){
             total=concat(start.getBytes(),currentblob.getcontents(),mid.getBytes(),branchblob.getcontents(),end.getBytes());
         }
+        assert total != null;
         Blob new_blob=new Blob(filename,total);
         new_blob.writeContents_Filename(CWD);
+        //System.out.println(new String(new_blob.getcontents()));
+        //System.out.println(new_blob.get_Hashval());
+
         addCommand(filename);
     }
 

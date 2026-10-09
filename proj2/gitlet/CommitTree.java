@@ -39,7 +39,12 @@ public class CommitTree implements Serializable {
         }
 
         public int get_child_count(){
-            return this.children.size();
+            if(this.children.isEmpty()){
+                return 0;
+            }
+            else{
+                return this.children.size();
+            }
         }
         public void add_child(Node child){
             this.children.add(child);
@@ -136,5 +141,29 @@ public class CommitTree implements Serializable {
         return readObject(file, CommitTree.class);
     }
 
+    public  void print_commitTree(){
+        print_help(this.root, 1);
+    }
 
+    private static void print_help(Node node, int n){
+        String spaces = " ".repeat(n);
+        System.out.println(spaces + node.data);
+        if(!node.children.isEmpty()){
+            for(Node child : node.children){
+                print_help(child, n+1);
+            }
+        }else {
+            return;
+        }
+    }
+
+    public void print_commitTree_branches(){
+        System.out.println("All branches: ");
+        for(String key : this.branches.keySet()){
+            System.out.println(key + ": " + this.branches.get(key).get_node_data());
+        }
+
+        System.out.println("Current branches: "+this.get_cur_branch());
+
+    }
 }

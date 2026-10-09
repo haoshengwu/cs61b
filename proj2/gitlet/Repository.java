@@ -172,13 +172,15 @@ public class Repository {
         //update commitTree and also head
         commitTree.add_node_from_head(commit.commit_HashVal());
 
-
 //        if(secondparentnode!=null){
 //            secondparentnode.add_child(commitTree.getHead());
 //        }
         commitTree.write_CommitTree(COMMITTREE_FILE);
-
+        //System.out.println("current branch commit: " + commitTree.get_cur_branch_node().get_node_data());
         //write as blobs
+        //commitTree.print_commitTree();
+        //commitTree.print_commitTree_branches();
+
         for(String key : stageindex.keySet()){
             String value = stageindex.get(key);
             if(!value.equals("removal")){
@@ -444,9 +446,9 @@ public class Repository {
                 Node branch=branchs.get(arg[1]);
                 String commitID=branch.get_node_data();
                 Commit commit= readCommit(join(COMMIT_DIR,commitID));
-                checkout_commit(commit);
                 commitTree.set_cur_branch_name(arg[1]);
-                commitTree.set_cur_branch_node_to_commitID(commitID);
+                checkout_commit(commit);
+                //commitTree.set_cur_branch_node_to_commitID(commitID);
                 commitTree.set_head_by_commitID(commitID);
                 commitTree.write_CommitTree(COMMITTREE_FILE);
 
@@ -494,7 +496,6 @@ public class Repository {
                 blot_to_write.writeContents_Filename(CWD);
             }
         }
-
     }
 
 
@@ -556,15 +557,15 @@ public class Repository {
     private static Node split_point(Node node1, Node node2){
         HashMap<String,Node> map=new HashMap<>();
         Node current_node=node1;
-        while(!(current_node==null)){
-            current_node=last_split(current_node);
+        while(current_node != null){
+ //           System.out.println(current_node.get_node_data());
             map.put(current_node.get_node_data(),current_node);
             current_node=current_node.get_node_parent();
         }
 
         Node node_tmp=node2;
-        while(!(node_tmp==null)){
-            node_tmp=last_split(node_tmp);
+        while(node_tmp != null){
+            //System.out.println(current_node.get_node_data());
             if(map.containsKey(node_tmp.get_node_data())){
                 break;
             }
@@ -575,7 +576,7 @@ public class Repository {
 
     public static Node last_split(Node node){
         Node cur = node;
-        while(true){
+        while(cur!=null){
             if(cur.get_child_count()>1){
                 return  node;
             }
@@ -583,17 +584,26 @@ public class Repository {
                 cur=cur.get_node_parent();
             }
         }
+        return null;
     }
 
     /** merge command */
     public static void merge(String branchname) {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
+        //commitTree.print_commitTree();
+        //commitTree.print_commitTree_branches();
 
         Node branchnode = commitTree.get_branch_node(branchname);
         Node currentnode = commitTree.get_cur_branch_node();
         boolean hasconflict=false;
+
+
         /** Find the split point */
         Node split_point = split_point(branchnode, currentnode);
+
+        //System.out.println("Current Node: "+currentnode.get_node_data());
+        //System.out.println("Branch Node: "+branchnode.get_node_data());
+        //System.out.println("Split Node: "+split_point.get_node_data());
 
         //if split point is the given branch
         if (split_point.equals(branchnode)) {
@@ -605,7 +615,6 @@ public class Repository {
             Commit commit = readCommit(join(COMMIT_DIR, commitID));
             checkout_commit(commit);
             System.out.println("Current branch fast-forwarded.");
-
             return;
         }
 
@@ -617,6 +626,8 @@ public class Repository {
         FileTree currentfiletree = currentcommit.get_file_tree();
         FileTree splitpointfiletree = splitnodecommit.get_file_tree();
 
+//        branchcommit.print_filetree();
+
         for (String key : branchfiletree.keySet()) {
             String hashval_branch;
             String hashval_current;
@@ -624,17 +635,26 @@ public class Repository {
             hashval_branch = branchfiletree.get(key);
             hashval_current = currentfiletree.get(key);
             hashval_splitpoint = splitpointfiletree.get(key);
-            if (!(hashval_branch == null) && (hashval_splitpoint == null) && (hashval_current == null)) {
-                //Situation 5
+
+//           System.out.println("File: "+key);
+//           System.out.println("Branch: "+hashval_branch);
+//           System.out.println("Current branch: "+hashval_current);
+//           System.out.println("Splitpoint: "+hashval_splitpoint);
+
+            if (hashval_branch != null && hashval_splitpoint == null && hashval_current == null) {
+//                System.out.println("File: "+key);
                 Blob blob = readBlob(join(BLOB_DIR, hashval_branch));
-                blob.writeContents_Filename(join(CWD, key));
+                blob.writeContents_Filename(CWD);
                 addCommand(key);
-            } else if (!(hashval_splitpoint == null) && !(hashval_branch == null) && (hashval_current == null)) {
+                break;
+            }
+            else if (hashval_splitpoint != null && hashval_branch != null && hashval_current == null) {
                 if (hashval_splitpoint.equals(hashval_branch)) {
                     //Situation 7
-                    break;
+                    continue;
                 }
-            } else if ((hashval_current == null) && !(hashval_branch == null) && !(hashval_splitpoint == null)) {
+            }
+            if (hashval_current == null && hashval_branch != null && hashval_splitpoint != null) {
                 if (!hashval_branch.equals(hashval_splitpoint)) {
                     //Situation 8
                     conflict(currentfiletree,branchfiletree,key);
@@ -651,25 +671,27 @@ public class Repository {
             hashval_current = currentfiletree.get(key);
             hashval_splitpoint = splitpointfiletree.get(key);
 
-            if (!(hashval_branch == null) && !(hashval_current == null) && !(hashval_splitpoint == null)) {
+            //System.out.println("File: "+key);
+
+            if (hashval_branch != null && hashval_current != null && hashval_splitpoint != null) {
                 if (!hashval_branch.equals(hashval_splitpoint) && hashval_current.equals(hashval_splitpoint)) {
                     //Situation 1
                     Blob blob = readBlob(join(BLOB_DIR, hashval_branch));
-                    blob.writeContents_Filename(join(CWD, key));
+                    blob.writeContents_Filename(CWD);
                     addCommand(key);
-                    break;
+                    continue;
                 } else if (!hashval_current.equals(hashval_splitpoint) && hashval_branch.equals(hashval_splitpoint)) {
                     //Situation 2
-                    break;
+                    continue;
                 } else if (hashval_current.equals(hashval_branch) && !hashval_current.equals(hashval_splitpoint)) {
                     //Situation 3.1
-                    break;
+                    continue;
                     //keep
                 }
-            } else if (!(hashval_current == null) && (hashval_splitpoint == null) && (hashval_branch == null)) {
+            } else if (hashval_current != null && (hashval_splitpoint == null) && (hashval_branch == null)) {
                 //Situation 4
                 break;
-            } else if (!(hashval_splitpoint == null) && !(hashval_current == null) && (hashval_branch == null)) {
+            } else if (hashval_splitpoint != null && !(hashval_current == null) && (hashval_branch == null)) {
                 if (hashval_splitpoint.equals(hashval_current)) {
                     //Situation 6
                     FileHashMap stageindex= readObject(STAGE_INDEX, FileHashMap.class);
@@ -677,17 +699,17 @@ public class Repository {
                     File file = join(CWD,key);
                     restrictedDelete(file);
                 }
-                if (!(hashval_branch == null) && !(hashval_current == null) && !(hashval_splitpoint == null)) {
+                if (hashval_branch != null && !(hashval_current == null) && !(hashval_splitpoint == null)) {
                     if (!hashval_branch.equals(hashval_current) && !hashval_branch.equals(hashval_splitpoint) && !hashval_current.equals(hashval_splitpoint)) {
                         conflict(currentfiletree,branchfiletree,key);
                         hasconflict=true;
                     }
-                } else if (hashval_branch == null && !(hashval_current == null) && !(hashval_splitpoint == null)) {
+                } else if (hashval_branch == null && hashval_current != null && hashval_splitpoint != null) {
                     if (!hashval_current.equals(hashval_splitpoint)) {
                         conflict(currentfiletree,branchfiletree,key);
                         hasconflict=true;
                     }
-                } else if (hashval_splitpoint == null && !(hashval_branch == null) && !(hashval_current == null)) {
+                } else if (hashval_splitpoint == null && hashval_branch != null && hashval_current != null) {
                     if (!hashval_branch.equals(hashval_current)) {
                         conflict(currentfiletree,branchfiletree,key);
                         hasconflict=true;
@@ -699,7 +721,7 @@ public class Repository {
         for(String filename : list){
             if(!branchfiletree.containsKey(filename) && !currentfiletree.containsKey(filename)){
                 //Situation 3.2
-                break;
+                continue;
             }
         }
 
@@ -713,13 +735,14 @@ public class Repository {
 
             if(!(hashval_splitpoint==null) && hashval_current==null && hashval_branch==null){
                 //Situation 3.2
-                break;
+                continue;
             }
         }
 
         //Final step
-        commit_merge("Merge "+branchname+"into "+commitTree.get_cur_branch(),branchnode);
-        commitTree.write_CommitTree(COMMITTREE_FILE);
+        commit_merge("Merged "+branchname+" into "+commitTree.get_cur_branch()+"\\.",branchnode);
+
+        //System.out.println("Merge "+branchname+"into "+commitTree.get_cur_branch());
         if(hasconflict){
             System.out.println("Encountered a merge conflict.");
         }
@@ -754,7 +777,7 @@ public class Repository {
             total=concat(start.getBytes(),currentblob.getcontents(),mid.getBytes(),branchblob.getcontents(),end.getBytes());
         }
         Blob new_blob=new Blob(filename,total);
-        new_blob.writeContents_Filename(join(CWD, filename));
+        new_blob.writeContents_Filename(CWD);
         addCommand(filename);
     }
 

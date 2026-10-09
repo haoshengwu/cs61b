@@ -132,4 +132,9 @@ public class Commit implements Serializable{
         }
     }
 
+    public void print_filetree(){
+        for(String key : this.fileTree.keySet()){
+            System.out.println(key+": "+this.fileTree.get(key));
+        }
+    }
 }

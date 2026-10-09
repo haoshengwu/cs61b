@@ -433,14 +433,13 @@ public class Repository {
                 System.out.println("Incorrect operands.");
                 System.exit(0);
             }
-            String id;
+            String id = "";
             CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
 
-            if(arg[1].length()<10){
-                id=arg[1];
-            } else {
+            if(arg[1].length()<40){
                 id=commitTree.get_full_commitID(arg[1]);
             }
+            //System.out.println(id);
             File commitfile=join(COMMIT_DIR,id);
             if(commitfile.exists()){
                 Commit commit= readCommit(commitfile);
@@ -508,7 +507,7 @@ public class Repository {
         }
         if(fileTree!=null){
             for(String key : fileTree.keySet()){
-                Blob blot_to_write=Blob.readBlob(join(BLOB_DIR,fileTree.get(key)));
+                Blob blot_to_write= readBlob(join(BLOB_DIR,fileTree.get(key)));
                 blot_to_write.writeContents_Filename(CWD);
             }
         }

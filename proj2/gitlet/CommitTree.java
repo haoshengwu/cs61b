@@ -61,18 +61,46 @@ public class CommitTree implements Serializable {
     }
 
     public Node get_node_by_commitID(Node node, String commitID) {
-        Node temp;
-        temp = node;
-        if (node.data.equals(commitID)) {
+        if (node == null || commitID == null) {
+            return null;
+        }
+
+        if (commitID.equals(node.data)) {
             return node;
-        } else {
+        }
+
+        if (node.children != null) {
             for (Node child : node.children) {
-                get_node_by_commitID(child, commitID);
+                Node result = get_node_by_commitID(child, commitID);
+                if (result != null) {
+                    return result;
+                }
             }
         }
-        return temp;
+
+        return null;
+    }
+    public String get_full_commitID(String shortid){
+        return get_full_commitID_help(shortid,this.root);
     }
 
+    private String get_full_commitID_help(String shortid, Node node){
+        if(node==null){
+            return null;
+        }
+        if(node.get_node_data().contains(shortid)){
+            return node.get_node_data();
+        }
+        if(node.children != null){
+            for(Node child : node.children){
+                String result = get_full_commitID_help(shortid,child);
+                if(result!=null){
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
 
     public void set_head_by_commitID(String commitID){
         set_head_by_commitID_help(this.root, commitID);

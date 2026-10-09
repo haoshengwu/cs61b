@@ -414,6 +414,8 @@ public class Repository {
     }
 
     /** checkout command */
+
+
     public static void checkout(String[] arg) {
         //System.out.println(arg.length);
         check_GITLET_DIR();
@@ -431,7 +433,15 @@ public class Repository {
                 System.out.println("Incorrect operands.");
                 System.exit(0);
             }
-            File commitfile=join(COMMIT_DIR,arg[1]);
+            String id;
+            CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
+
+            if(arg[1].length()<10){
+                id=arg[1];
+            } else {
+                id=commitTree.get_full_commitID(arg[1]);
+            }
+            File commitfile=join(COMMIT_DIR,id);
             if(commitfile.exists()){
                 Commit commit= readCommit(commitfile);
                 write_file_from_commit(commit,arg[3]);

@@ -592,7 +592,31 @@ public class Repository {
         CommitTree commitTree = read_CommitTree(COMMITTREE_FILE);
         //commitTree.print_commitTree();
         //commitTree.print_commitTree_branches();
-
+        FileHashMap stageindex = readObject(STAGE_INDEX, FileHashMap.class);
+        if(!stageindex.isEmpty()){
+            System.out.println("You have uncommitted changes.");
+            System.exit(0);
+        }
+        if(!commitTree.branch_exist(branchname)){
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+        if(commitTree.get_cur_branch().equals(branchname)){
+            System.out.println("Cannot merge a branch with itself.");
+            System.exit(0);
+        }
+        List<String> list=plainFilenamesIn(CWD);
+        for(String filename : list) {
+            //check whether there is blob
+            Blob blob_for_check = new Blob(CWD, filename);
+            String val = blob_for_check.get_Hashval();
+            File file_for_check = join(BLOB_DIR, val);
+            //if not commit, then error
+            if (!file_for_check.exists()) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
         Node branchnode = commitTree.get_branch_node(branchname);
         Node currentnode = commitTree.get_cur_branch_node();
         boolean hasconflict=false;
@@ -702,7 +726,6 @@ public class Repository {
             } else if ( hashval_current != null && hashval_branch == null && hashval_splitpoint != null) {
                 if (hashval_splitpoint.equals(hashval_current)) {
                     //Situation 6
-                    FileHashMap stageindex = readObject(STAGE_INDEX, FileHashMap.class);
                     stageindex.put(key, "removal");
                     File file = join(CWD, key);
                     restrictedDelete(file);
@@ -720,7 +743,6 @@ public class Repository {
             }
 
         }
-        List<String> list=plainFilenamesIn(CWD);
 
         for(String filename : list){
             if(!branchfiletree.containsKey(filename) && !currentfiletree.containsKey(filename)){
